@@ -1,0 +1,1 @@
+# NFTHack2022-NFTastic
