@@ -8,6 +8,8 @@
 import requests
 import json
 import streamlit as st
+import numpy as np
+import pandas as pd
 
 
 def nft_market(url):
@@ -41,6 +43,7 @@ with open('nft_market_polygon.json', 'r') as file:
             collections.append(line)
     print(collections)
     print(type(collections))
+    df = pd.DataFrame (collections, columns = ['Collection', 'Collection Contract Address'])
 
 # st.selectbox(label, options, index=0, format_func=special_internal_function, key=None, help=None, on_change=None, args=None, kwargs=None, *, disabled=False)
-st.selectbox("NFT Collections", collections)
+st.selectbox("NFT Collections", df)
