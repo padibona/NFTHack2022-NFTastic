@@ -13,8 +13,6 @@ def get_api_call(url):
 # covalent API key (not ideal hardcoding) TODO - put into .env file and import into code from there.
 key = "ckey_b40694ee8531497b822f4b9953f"
 
-# Title for App
-st.title('NFTastic - NFT Analytics')
 # pull initial chains data to populate the first dropdown on the left.
 url_chains = "https://api.covalenthq.com/v1/chains/?quote-currency=USD&format=JSON&key=" + key
 response_chains = get_api_call(url_chains)
@@ -76,6 +74,9 @@ with open('nft_market.json', 'r') as file:
 
 # Populate sidebar with Collections Dataframe
 collection_option = st.sidebar.selectbox("Select NFT Collection", df_collections)
+# Title for App
+st.title('NFTastic - NFT Analytics\n' + chain_option + ' - ' + collection_option)
+
 #Add numeric input widget for data filters
 days_count = st.sidebar.number_input('# of days for graph', min_value=1, max_value=365, value=30, step=1)
 
@@ -109,9 +110,12 @@ df_collections = df_collections[['collection_name', 'opening_date', 'collection_
                                  'average_volume_quote_day', 'unique_token_ids_sold_count_day',
                                  'floor_price_quote_7d', 'gas_quote_rate_day']]
 df_collections = df_collections.set_index(['opening_date'])
+days_count = 0 - days_count
+df_collections = df_collections.iloc[days_count:]
+print(df_collections.tail(30))
 # fixing this due to bug in streamlit
-df_collections = df_collections.astype(str)
-print(df_collections.head(10))
+#df_collections = df_collections.astype(str)
+#print(df_collections.head(10))
 
 # Function signature
 # st.bokeh_chart(figure, use_container_width=False)
