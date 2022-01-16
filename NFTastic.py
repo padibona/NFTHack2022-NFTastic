@@ -18,7 +18,7 @@ def get_api_call(url):
     return response
 
 
-st.sidebar.title('NFTastic - NFT Analytics')
+st.title('NFTastic - NFT Analytics')
 # TODO - Change static chain_id to a list of chain IDs pulled from the response_chains_dict variable
 chain_id = "137"
 key = "ckey_b40694ee8531497b822f4b9953f"
@@ -52,7 +52,7 @@ with open('chains.json', 'r') as file:
 
 # st.selectbox(label, options, index=0, format_func=special_internal_function, key=None, help=None, on_change=None, args=None, kwargs=None, *, disabled=False)
 
-chain_option = st.sidebar.selectbox("Chain", df_chains)
+chain_option = st.sidebar.selectbox("Select Chain", df_chains)
 # Create list of Dicts from the list of tuples
 list_of_chain_dicts = []
 for y in chains:
@@ -85,7 +85,7 @@ with open('nft_market.json', 'r') as file:
             collections.append(collection)
     df_collections = pd.DataFrame(collections, columns=['Collection', 'Collection Contract Address'])
     # print(df_collections)
-collection_option = st.sidebar.selectbox("NFT Collections", df_collections)
+collection_option = st.sidebar.selectbox("Select NFT Collection", df_collections)
 # Create list of Dicts from the list of tuples
 list_of_collections_dicts = []
 for c in collections:
