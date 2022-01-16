@@ -76,6 +76,8 @@ with open('nft_market.json', 'r') as file:
 
 # Populate sidebar with Collections Dataframe
 collection_option = st.sidebar.selectbox("Select NFT Collection", df_collections)
+#Add numeric input widget for data filters
+days_count = st.sidebar.number_input('# of days for graph', min_value=1, max_value=365, value=30, step=1)
 
 # Create list of Dicts from the list of tuples TODO - see if we can remove this step by manipulating data better earlier.
 list_of_collections_dicts = []
