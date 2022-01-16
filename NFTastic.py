@@ -10,6 +10,7 @@ import json
 import streamlit as st
 import numpy as np
 import pandas as pd
+import csv
 
 
 def get_api_call(url):
@@ -94,8 +95,27 @@ for c in collections:
 collectionz = next(item for item in list_of_collections_dicts if item["Collection"] == collection_option)
 collection_contract_address = collectionz['Collection Contract Address']
 # https://api.covalenthq.com/v1/1/nft_market/collection/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/?key=ckey_b40694ee8531497b822f4b9953f
-url_collection = "https://api.covalenthq.com/v1/" + chain_id3 + "/nft_market/collection/" + collection_contract_address + "/?key=" + key
+url_collection = "https://api.covalenthq.com/v1/" + chain_id3 + "/nft_market/collection/" + collection_contract_address + "/?key=" + key + "format=json"
 print(url_collection)
 collection_historical = get_api_call(url_collection)
-response_collection_historical = collection_historical.json()
-print(response_collection_historical)
+collection_historical = collection_historical.json()
+print(collection_historical.keys())
+collection_data_dict = collection_historical['data']
+print(collection_data_dict.keys())
+collection_data_list = collection_data_dict['items']
+print(collection_data_list)
+df_collections = pd.DataFrame(collection_data_list, columns=['chain_id', 'collection_name','collection_address',
+                                                             'collection_ticker_symbol', 'opening_date',
+                                                             'volume_wei_day', 'volume_quote_day',
+                                                             'average_volume_wei_day', 'average_volume_quote_day',
+                                                             'unique_token_ids_sold_count_day', 'floor_price_wei_7d',
+                                                             'floor_price_quote_7d', 'gas_quote_rate_day', 'quote_currency'])
+# print(df_collections.head(10))
+# df_collections = df_collections.loc('collection_name', 'opening_date', 'collection_ticker_symbol', 'volume_quote_day',
+#                                     'average_volume_quote_day', 'unique_token_ids_sold_count_day',
+#                                     'floor_price_quote_7d', 'gas_quote_rate_day')
+df_collections = df_collections[['collection_name', 'opening_date', 'collection_ticker_symbol', 'volume_quote_day',
+                                 'average_volume_quote_day', 'unique_token_ids_sold_count_day',
+                                 'floor_price_quote_7d', 'gas_quote_rate_day']]
+print(df_collections.head(10))
+
