@@ -85,3 +85,17 @@ with open('nft_market.json', 'r') as file:
     df_collections = pd.DataFrame(collections, columns=['Collection', 'Collection Contract Address'])
     # print(df_collections)
 collection_option = st.sidebar.selectbox("NFT Collections", df_collections)
+# Create list of Dicts from the list of tuples
+list_of_collections_dicts = []
+for c in collections:
+    collection_name = c[0]
+    collection_address = c[1]
+    list_of_collections_dicts.append({"Collection": collection_name, "Collection Contract Address": collection_address})
+collectionz = next(item for item in list_of_collections_dicts if item["Collection"] == collection_option)
+collection_contract_address = collectionz['Collection Contract Address']
+# https://api.covalenthq.com/v1/1/nft_market/collection/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/?key=ckey_b40694ee8531497b822f4b9953f
+url_collection = "https://api.covalenthq.com/v1/" + chain_id3 + "/nft_market/collection/" + collection_contract_address + "/?key=" + key
+print(url_collection)
+collection_historical = get_api_call(url_collection)
+response_collection_historical = collection_historical.json()
+print(response_collection_historical)
