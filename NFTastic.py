@@ -1,10 +1,8 @@
 import requests
 import json
 import streamlit as st
-import numpy as np
 import pandas as pd
-import csv
-from bokeh.plotting import figure
+
 
 # Generic GET call
 def get_api_call(url):
