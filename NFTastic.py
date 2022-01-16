@@ -117,7 +117,7 @@ df_collections = df_collections[['collection_name', 'opening_date', 'collection_
 df_collections = df_collections.set_index(['opening_date'])
 days_count = 0 - days_count
 df_collections = df_collections.iloc[days_count:]
-print(df_collections.tail(30))
+print(df_collections.tail(days_count))
 # fixing this due to bug in streamlit
 #df_collections = df_collections.astype(str)
 #print(df_collections.head(10))
