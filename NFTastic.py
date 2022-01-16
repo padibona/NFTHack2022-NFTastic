@@ -105,6 +105,11 @@ df_collections = pd.DataFrame(collection_data_list, columns=['chain_id', 'collec
                                                              'unique_token_ids_sold_count_day', 'floor_price_wei_7d',
                                                              'floor_price_quote_7d', 'gas_quote_rate_day', 'quote_currency'])
 
+# Display general info on sidebar - TODO add market cap, all time txn count, all time unique token id sales, unique wallet purchase price, and max price 
+st.sidebar.write('NFT Symbol' + ' - ' + df_collections['collection_ticker_symbol'].iloc[0]) 
+st.sidebar.write('Contract address' + ' - ' + df_collections['collection_address'].iloc[0]) 
+st.sidebar.write('Launch Date' + ' - ' + df_collections['opening_date'].iloc[0])
+
 # Pulled out what we saw as critical data, into a cleaner Dataframe
 df_collections = df_collections[['collection_name', 'opening_date', 'collection_ticker_symbol', 'volume_quote_day',
                                  'average_volume_quote_day', 'unique_token_ids_sold_count_day',
@@ -156,8 +161,13 @@ print(df_collections.tail(30))
 #     y,
 #     columns=['a', 'b', 'c'])
 # st.line_chart(data=None, width=0, height=0, use_container_width=True)
+st.write('7 Day Floor Price USD')
 st.line_chart(df_collections['floor_price_quote_7d'], use_container_width=False, width=1000, height=500)
+st.write('Volume USD')
 st.line_chart(df_collections['volume_quote_day'], use_container_width=False, width=1000, height=500)
+st.write('Average Volume USD')
 st.line_chart(df_collections['average_volume_quote_day'], use_container_width=False, width=1000, height=500)
+st.write('Number of Unique Tokens Sold')
 st.line_chart(df_collections['unique_token_ids_sold_count_day'], use_container_width=False, width=1000, height=500)
+st.write('Gas Rate USD')
 st.line_chart(df_collections['gas_quote_rate_day'], use_container_width=False, width=1000, height=500)
