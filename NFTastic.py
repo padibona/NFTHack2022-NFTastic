@@ -6,7 +6,10 @@ import pandas as pd
 
 # Generic GET call
 def get_api_call(url):
+    print('Attempting call to ' + url)
     response = requests.get(url)
+    print('response code: ' + str(response.status_code))
+    print('response content: ' + str(response.content))
     return response
 # covalent API key (not ideal hardcoding) TODO - put into .env file and import into code from there.
 key = "ckey_b40694ee8531497b822f4b9953f"
@@ -49,7 +52,6 @@ chain_id3 = chainz['Chain ID']
 
 # Make the nft_market API call to pull the list of collections
 url_nft_market = "https://api.covalenthq.com/v1/" + chain_id3 + "/nft_market/?key=" + key
-print(url_nft_market)
 response_collections = get_api_call(url_nft_market)
 response_collections = response_collections.json()
 
@@ -64,11 +66,9 @@ with open('nft_market.json', 'r') as file:
     collections = []
     for x in items_list:
         if x['collection_name'] is not None:
-            # print(x['collection_name'], x['collection_address'])
             collection = x['collection_name'], x['collection_address']
             collections.append(collection)
     df_collections = pd.DataFrame(collections, columns=['Collection', 'Collection Contract Address'])
-    # print(df_collections)
 
 # Populate sidebar with Collections Dataframe
 collection_option = st.sidebar.selectbox("Select NFT Collection", df_collections)
@@ -76,7 +76,7 @@ collection_option = st.sidebar.selectbox("Select NFT Collection", df_collections
 st.title('NFTastic - NFT Analytics\n' + chain_option + ' - ' + collection_option)
 
 #Add numeric input widget for data filters
-days_count = st.sidebar.number_input('# of days for graph', min_value=1, max_value=365, value=30, step=1)
+#days_count = st.sidebar.number_input('# of days for graph', min_value=1, max_value=365, value=30, step=1)
 
 # Create list of Dicts from the list of tuples TODO - see if we can remove this step by manipulating data better earlier.
 list_of_collections_dicts = []
@@ -89,76 +89,39 @@ collectionz = next(item for item in list_of_collections_dicts if item["Collectio
 collection_contract_address = collectionz['Collection Contract Address']
 
 # Make nft_market/collection call to pull time series data for the collection chosen in the dropdown.
-url_collection = "https://api.covalenthq.com/v1/" + chain_id3 + "/nft_market/collection/" + collection_contract_address + "/?key=" + key + "format=json"
-print(url_collection)
+url_collection = "https://api.covalenthq.com/v1/" + chain_id3 + "/nft_market/collection/" + \
+                 collection_contract_address + "/?key=" + key + "format=json"
 collection_historical = get_api_call(url_collection)
 collection_historical = collection_historical.json()
 
 # Pull out Time series data
 collection_data_list = collection_historical['data']['items']
+print(collection_data_list)
 df_collections = pd.DataFrame(collection_data_list, columns=['chain_id', 'collection_name','collection_address',
                                                              'collection_ticker_symbol', 'opening_date',
                                                              'volume_wei_day', 'volume_quote_day',
                                                              'average_volume_wei_day', 'average_volume_quote_day',
                                                              'unique_token_ids_sold_count_day', 'floor_price_wei_7d',
-                                                             'floor_price_quote_7d', 'gas_quote_rate_day', 'quote_currency'])
+                                                             'floor_price_quote_7d', 'gas_quote_rate_day',
+                                                             'quote_currency'])
 
-# Display general info on sidebar - TODO add market cap, all time txn count, all time unique token id sales, unique wallet purchase price, and max price 
+# Display general info on sidebar - TODO add market cap, all time txn count, all time unique token id sales,
+#  unique wallet purchase price, and max price
 st.sidebar.write('NFT Symbol' + ' - ' + df_collections['collection_ticker_symbol'].iloc[0]) 
-st.sidebar.write('Contract address' + ' - ' + df_collections['collection_address'].iloc[0]) 
-st.sidebar.write('Launch Date' + ' - ' + df_collections['opening_date'].iloc[0])
+st.sidebar.write('Contract address' + ' - ' + collection_contract_address)
+# st.sidebar.write('Launch Date' + ' - ' + df_collections['opening_date'].iloc[0])
 
 # Pulled out what we saw as critical data, into a cleaner Dataframe
 df_collections = df_collections[['collection_name', 'opening_date', 'collection_ticker_symbol', 'volume_quote_day',
                                  'average_volume_quote_day', 'unique_token_ids_sold_count_day',
                                  'floor_price_quote_7d', 'gas_quote_rate_day']]
 df_collections = df_collections.set_index(['opening_date'])
-days_count = 0 - days_count
-df_collections = df_collections.iloc[days_count:]
-print(df_collections.tail(days_count))
-# fixing this due to bug in streamlit
-#df_collections = df_collections.astype(str)
-#print(df_collections.head(10))
 
-# Function signature
-# st.bokeh_chart(figure, use_container_width=False)
-#
-# Parameters
-# figure (bokeh.plotting.figure.Figure)
-#
-# A Bokeh figure to plot.
-#
-# use_container_width (bool)
-#
-# If True, set the chart width to the column width. This takes precedence over Bokeh's native width value.
-#
-# To show Bokeh charts in Streamlit, call `st.bokeh_chart` (null)
-#
-# No description
-#
-# wherever you would call Bokeh's `show`. (null)
-#
-# title_string = 'Weekly Floor Prices over time for ' + df_collections['collection_name']
-#
-# # No description
-# p = figure(
-#     title=title_string,
-#     x_axis_label='Date',
-#     y_axis_label='Floor Prices')
-#
-# # x = dates
-# x = df_collections['opening_date']
-# print(x)
-# # y = value
-# y = df_collections['floor_price_quote_7d']
-# print(y)
-# p.line(x, y, legend_label='Trend', line_width=2)
-# st.bokeh_chart(p, use_container_width=False)
+#days_count = 0 - days_count
+# print(df_collections)
+# df_collections = df_collections.iloc[days_count:]
+# print('collections dataframe: ', df_collections.head(days_count))
 
-# chart_data = pd.DataFrame(
-#     y,
-#     columns=['a', 'b', 'c'])
-# st.line_chart(data=None, width=0, height=0, use_container_width=True)
 st.write('7 Day Floor Price USD')
 st.line_chart(df_collections['floor_price_quote_7d'], use_container_width=False, width=1000, height=500)
 st.write('Volume USD')
